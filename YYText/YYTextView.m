@@ -1470,7 +1470,29 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
     NSRange newRange = NSMakeRange(range.asRange.location, text.length);
     [_innerText replaceCharactersInRange:range.asRange withString:text];
     [_innerText yy_removeDiscontinuousAttributesInRange:newRange];
+    _selectedTextRange = [self _correctedTextRange:_selectedTextRange];
     if (notify) [_inputDelegate textDidChange:self];
+}
+
+
+-(void)insertDictationResult:(NSArray<UIDictationPhrase *> *)dictationResult{
+    NSMutableString *phraseResult = @"".mutableCopy;
+    for (UIDictationPhrase *phrase in dictationResult) {
+        [phraseResult appendString:phrase.text];
+    }
+    [self insertText:phraseResult];
+}
+
+- (void)dictationRecordingDidEnd{
+    NSLog(@"dictationRecordingDidEnd，，，");
+}
+
+-(id)insertDictationResultPlaceholder{
+    return nil;//如果不实现则insertDictationResult的插入文本会被覆盖
+}
+
+-(void)removeDictationResultPlaceholder:(id)placeholder willInsertResult:(BOOL)willInsertResult{
+    //do nothing  相应的由于实现了insertDictationResultPlaceholder，则这里识别完毕后删除也不需要做任何事情
 }
 
 /// Save current typing attributes to the attributes holder.
