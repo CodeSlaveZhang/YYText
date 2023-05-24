@@ -45,6 +45,13 @@
                 CGPoint pos;
                 CTRunGetPositions(run, CFRangeMake(0, 1), &pos);
                 _firstGlyphPos = pos.x;
+                ///case CTLineGetTypographicBounds does not fix trailing while the text aligment is 'center'
+                NSDictionary *attrs = (id)CTRunGetAttributes(run);
+                NSParagraphStyle *paraStyle = attrs[NSParagraphStyleAttributeName];
+                if (paraStyle.alignment == NSTextAlignmentCenter) {
+                    //fix the trailing as same as the leading
+                    _lineWidth += _position.x;
+                }
             } else {
                 _firstGlyphPos = 0;
             }
